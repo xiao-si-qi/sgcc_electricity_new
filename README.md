@@ -2,13 +2,13 @@
 
 添加微信通知后，我想这基本上就是这个插件的最终形态了，docker镜像压缩到300MB，后续可能只会在网站变动或者出问题才会更新，再次感谢大家的Star。
 
-**注意** 有很多新手都在提交验证码不能识别的相关issue，特在此统一说明：国网每天有登录限制，每天只能登录有限的几次，超过限制验证码识别成功也不会登录成功。因此，诸如[issue47](https://github.com/ARC-MX/sgcc_electricity_new/issues/47),[issue50](https://github.com/ARC-MX/sgcc_electricity_new/issues/50),[issue29](https://github.com/ARC-MX/sgcc_electricity_new/issues/29)这些都是这个问题，以后就不做回复了。
+**注意** 有很多新手都在提交验证码不能识别的相关issue，特在此统一说明：国网每天有登录限制，每天只能登录有限的几次，超过限制验证码识别成功也不会登录成功。因此，诸如[issue47](https://github.com/xiao-si-qi/sgcc_electricity_new/issues/47),[issue50](https://github.com/xiao-si-qi/sgcc_electricity_new/issues/50),[issue29](https://github.com/xiao-si-qi/sgcc_electricity_new/issues/29)这些都是这个问题，以后就不做回复了。
 
 ### 入群方式
 
 最近issue太多实在是回复不过来了，特此添加QQ交流群
 通过为项目点star并微信打赏备注QQ名或QQ号等信息，入群会审核这些信息
-[关于创建QQ付费群的说明](https://github.com/ARC-MX/sgcc_electricity_new/issues/78)
+[关于创建QQ付费群的说明](https://github.com/xiao-si-qi/sgcc_electricity_new/issues/78)
 
 ### 支付宝&微信 打赏码
 
@@ -20,7 +20,7 @@
 
 # ⚡️国家电网电力获取
 
-[![Docker Image CI](https://github.com/ARC-MX/sgcc_electricity_new/actions/workflows/docker-image.yml/badge.svg)](https://github.com/ARC-MX/sgcc_electricity_new/actions/workflows/docker-image.yml)
+[![Docker Image CI](https://github.com/xiao-si-qi/sgcc_electricity_new/actions/workflows/docker-image.yml/badge.svg)](https://github.com/xiao-si-qi/sgcc_electricity_new/actions/workflows/docker-image.yml)
 [![Image Size](https://img.shields.io/docker/image-size/arcw/sgcc_electricity)](https://hub.docker.com/r/arcw/sgcc_electricity)
 [![Docker Pull](https://img.shields.io/docker/pulls/arcw/sgcc_electricity?color=%2348BB78&logo=docker&label=pulls)](https://hub.docker.com/r/arcw/sgcc_electricity)
 
@@ -90,9 +90,9 @@
 2. 克隆仓库
 
 ```bash
-git clone https://github.com/ARC-MX/sgcc_electricity_new.git
+git clone https://github.com/xiao-si-qi/sgcc_electricity_new.git
 # 如果github网络环境不好的话可以使用国内镜像，完全同步的，个人推荐使用国内镜像
-# git clone https://gitee.com/ARC-MX/sgcc_electricity_new.git
+# git clone https://gitee.com/xiao-si-qi/sgcc_electricity_new.git
 cd sgcc_electricity_new
 ```
 
@@ -160,7 +160,7 @@ docker-compose logs sgcc_electricity_app
 运行成功应该显示如下日志：
 
 ```bash
-2024-06-06 16:00:43  [INFO    ] ---- 程序开始，当前仓库版本为1.x.x，仓库地址为https://github.com/ARC-MX/sgcc_electricity_new.git
+2024-06-06 16:00:43  [INFO    ] ---- 程序开始，当前仓库版本为1.x.x，仓库地址为https://github.com/xiao-si-qi/sgcc_electricity_new.git
 2024-06-06 16:00:43  [INFO    ] ---- enable_database_storage为false，不会储存到数据库
 2024-06-06 16:00:43  [INFO    ] ---- 当前登录的用户名为: xxxxxx，homeassistant地址为http://192.168.1.xx:8123/,程序将在每天00:00执行
 2024-06-06 16:00:43  [INFO    ] ---- 此次为首次运行，等待时间(FIRST_SLEEP_TIME)为10秒，可在.env中设置
@@ -379,7 +379,7 @@ cards:
 
 # 其他
 
-> 当前作者：[https://github.com/ARC-MX/sgcc_electricity_new](https://github.com/ARC-MX/sgcc_electricity_new)
+> 当前作者：[https://github.com/xiao-si-qi/sgcc_electricity_new](https://github.com/xiao-si-qi/sgcc_electricity_new)
 >
 > 原作者：[https://github.com/louisslee/sgcc_electricity](https://github.com/louisslee/sgcc_electricity)，原始[README_origin.md](归档/README_origin.md)。
 
@@ -388,7 +388,7 @@ cards:
 增加的部分：
 
 - 增加近30天每日电量写入数据库（默认mongodb），其他数据库请自行配置。
-  - 添加配置默认增加近 7 天每日电量写入数据, 可修改为 30 天, 因为国网目前[「要签约智能交费才能看到30天的数据，不然就只能看到7天的」](https://github.com/ARC-MX/sgcc_electricity_new/issues/11#issuecomment-2158973048)。【注意：开通智能缴费后电费可能从「后付费」变为「预付费」，也就是「欠费即停电」，习惯了每月定时按账单缴费的需要注意，谨防停电风险】
+  - 添加配置默认增加近 7 天每日电量写入数据, 可修改为 30 天, 因为国网目前[「要签约智能交费才能看到30天的数据，不然就只能看到7天的」](https://github.com/xiao-si-qi/sgcc_electricity_new/issues/11#issuecomment-2158973048)。【注意：开通智能缴费后电费可能从「后付费」变为「预付费」，也就是「欠费即停电」，习惯了每月定时按账单缴费的需要注意，谨防停电风险】
 - 将间歇执行设置为定时执行: JOB_START_TIME，24小时制，例如"07:00”则为每天早上7点执行，第一次启动程序立即执行一次, 每12小时执行一次
 - 给last_daily_usage增加present_date，用来确定更新的是哪一天的电量。一般查询的日期会晚一到两天。
 - 对configuration.yaml中自定义实体部分修改。

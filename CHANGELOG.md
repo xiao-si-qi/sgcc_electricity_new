@@ -1,5 +1,8 @@
 # Changelog
 
+## [v1.6.8][v1.6.8] - 2026-02-13
+ 
+
 ## [v1.6.8][v1.6.8] - 2025-07-10
 
 ### 更换默认浏览器
@@ -29,5 +32,5 @@
 
 - 修复了一些小bug.
 
-[v1.6.4]: https://github.com/ARC-MX/sgcc_electricity_new/compare/v1.6.3...v1.6.4
-[v1.6.3]: https://github.com/ARC-MX/sgcc_electricity_new/releases/tag/v1.6.3
+[v1.6.4]: https://github.com/xiao-si-qi/sgcc_electricity_new/compare/v1.6.3...v1.6.4
+[v1.6.3]: https://github.com/xiao-si-qi/sgcc_electricity_new/releases/tag/v1.6.3

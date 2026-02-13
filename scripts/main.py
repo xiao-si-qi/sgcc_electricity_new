@@ -64,7 +64,7 @@ def main():
             logging.error(f"Failing to read the .env file, the program will exit with an error message: {e}.")
             sys.exit()
 
-    logging.info(f"The current repository version is {VERSION}, and the repository address is https://github.com/ARC-MX/sgcc_electricity_new.git")
+    logging.info(f"The current repository version is {VERSION}, and the repository address is https://github.com/xiao-si-qi/sgcc_electricity_new.git")
     current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     logging.info(f"The current date is {current_datetime}.")
 
