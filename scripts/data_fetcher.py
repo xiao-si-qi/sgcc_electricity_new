@@ -124,52 +124,48 @@ class DataFetcher:
     # @staticmethod 
     def _sliding_track(self, driver, distance):
         """
-        模拟人工滑动轨迹，包含加速、减速、超出回拉和随机抖动
-        :param driver: WebDriver实例
-        :param distance: 需要滑动的总距离（整数）
+        快速模拟人工滑动轨迹（速度提升一倍）
         """
         logging.info("模拟人工滑动开始")
         slider = driver.find_element(By.CLASS_NAME, "slide-verify-slider-mask-item")
         ActionChains(driver).click_and_hold(slider).perform()
-        time.sleep(random.uniform(0.1, 0.2))  # 按下后短暂停顿，模仿人反应时间
+        time.sleep(random.uniform(0.05, 0.1))  # 按下后短暂停顿，时间减半
 
-        # 生成平滑轨迹（包含微小的来回滑动）
         tracks = self._generate_tracks(distance)
 
-        # 执行滑动
         for x_offset in tracks:
-            # Y轴随机偏移，模拟手部自然抖动
-            y_offset = random.uniform(-2, 3)
+            y_offset = random.uniform(-2, 3)  # 保留Y轴抖动
             ActionChains(driver).move_by_offset(xoffset=x_offset, yoffset=y_offset).perform()
-            # 随机短时停顿，模仿像素级调整
-            time.sleep(random.uniform(0.001, 0.005))
+            # 取消细粒度停顿，改为极小概率短停（或完全移除）
+            if random.random() < 0.1:  # 仅10%概率停顿，且时间极短
+                time.sleep(0.001)
 
-        # 释放滑块
         ActionChains(driver).release().perform()
         logging.info("模拟人工滑动结束")
 
     def _generate_tracks(self, distance):
         """
-        生成符合人类操作习惯的滑动轨迹：
-        - 加速 → 匀速 → 减速 → 轻微超出 → 回拉修正
-        :param distance: 目标距离（px）
-        :return: 每一步的x偏移量列表（int）
+        生成更快滑动轨迹：
+        - 加速阶段步长加倍：6~12px
+        - 减速阶段步长加倍：2~5px
+        - 超出回拉概率降低，幅度减小
         """
         tracks = []
         current = 0
-        # 加速阶段：步长逐渐增大，覆盖约60%的距离
-        while current < distance * 0.6:
-            step = random.randint(3, 7)  # 大步快速接近
-            if current + step > distance * 0.6:
-                step = int(distance * 0.6) - current
+
+        # 1. 加速阶段：大步快速推进，覆盖约70%距离（比原来更多）
+        while current < distance * 0.7:
+            step = random.randint(6, 12)
+            if current + step > distance * 0.7:
+                step = int(distance * 0.7) - current
             current += step
             tracks.append(step)
             if step <= 0:
                 break
 
-        # 减速微调阶段：步长减小，精细对准
+        # 2. 减速微调阶段：步长2~5，快速对准
         while current < distance:
-            step = random.randint(1, 3)  # 小步慢挪
+            step = random.randint(2, 5)
             if current + step > distance:
                 step = distance - current
             current += step
@@ -177,20 +173,20 @@ class DataFetcher:
             if step <= 0:
                 break
 
-        # 模拟“过头”和“回拉”：约30%概率轻微超出2~4px再拉回
-        if random.random() < 0.3:
-            over = random.randint(2, 4)
-            tracks.append(over)  # 超出
-            tracks.append(-over)  # 回拉至目标点
+        # 3. 超出回拉：概率降至20%，超出量减少至1~3px
+        if random.random() < 0.2:
+            over = random.randint(1, 3)
+            tracks.append(over)
+            tracks.append(-over)
 
-        # 总偏移量修正（确保最终位置精确）
+        # 4. 总距离修正
         total = sum(tracks)
         if total != distance:
             diff = distance - total
-            if abs(diff) < 5:  # 微小误差直接修正最后一步
+            if abs(diff) < 6:
                 if tracks:
                     tracks[-1] += diff
-            else:  # 误差较大时额外插入一步
+            else:
                 tracks.append(diff)
 
         return tracks
