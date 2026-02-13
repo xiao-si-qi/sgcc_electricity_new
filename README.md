@@ -149,7 +149,7 @@ PUSHPLUS_TOKEN=xxxxxxx,xxxxxxx,xxxxxxx
 4. 运行
 
   我已经优化了镜像环境，将镜像的地址配置为阿里云，如果要使用docker hub的源可以将docker-compose.yml中
-  image: registry.cn-hangzhou.aliyuncs.com/arcw/sgcc_electricity:latest 改为 arcw/sgcc_electricity:latest
+  image: crpi-o941fcfa1ejxgrb9.cn-hangzhou.personal.cr.aliyuncs.com/xiaosiqi/sgcc_electricity_new:latest 改为 arcw/sgcc_electricity:latest
 
 ```bash
 运行获取传感器名称
