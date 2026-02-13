@@ -125,8 +125,22 @@ class DataFetcher:
     def _sliding_track(self, driver, distance):
         """
         快速模拟人工滑动轨迹（速度提升一倍）
+        在滑动开始和结束时截图保存到 /data 目录
         """
+        # 生成时间戳用于文件名
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        screenshot_dir = "/data"
+
+        # 确保截图目录存在
+        if not os.path.exists(screenshot_dir):
+            os.makedirs(screenshot_dir, exist_ok=True)
+
         logging.info("模拟人工滑动开始")
+        # 滑动开始前截图
+        start_screenshot_path = os.path.join(screenshot_dir, f"slide_start_{timestamp}.png")
+        driver.save_screenshot(start_screenshot_path)
+        logging.info(f"滑动开始截图已保存: {start_screenshot_path}")
+
         slider = driver.find_element(By.CLASS_NAME, "slide-verify-slider-mask-item")
         ActionChains(driver).click_and_hold(slider).perform()
         time.sleep(random.uniform(0.05, 0.1))  # 按下后短暂停顿，时间减半
@@ -140,8 +154,14 @@ class DataFetcher:
             if random.random() < 0.1:  # 仅10%概率停顿，且时间极短
                 time.sleep(0.001)
 
-        ActionChains(driver).release().perform()
         logging.info("模拟人工滑动结束")
+        ActionChains(driver).release().perform()
+
+        # 滑动结束后截图
+        end_screenshot_path = os.path.join(screenshot_dir, f"slide_end_{timestamp}.png")
+        driver.save_screenshot(end_screenshot_path)
+        logging.info(f"滑动结束截图已保存: {end_screenshot_path}")
+
 
     def _generate_tracks(self, distance):
         """
