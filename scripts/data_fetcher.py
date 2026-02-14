@@ -224,8 +224,11 @@ class DataFetcher:
         height = 1080
         firefox_options.add_argument(f'--window-size={width},{height}')
         logging.info(f"Open Firefox.\r")
-        service = FirefoxService(GeckoDriverManager().install())
-        driver = webdriver.Firefox(options=firefox_options, service=service)
+        if platform.system() != 'Windows':
+            driver = webdriver.Firefox(options=firefox_options, service=FirefoxService("/usr/bin/geckodriver"))
+        else:
+            service = FirefoxService(GeckoDriverManager().install())
+            driver = webdriver.Firefox(options=firefox_options, service=service)
         driver.implicitly_wait(self.DRIVER_IMPLICITY_WAIT_TIME)
         # driver.implicitly_wait(self.DRIVER_IMPLICITY_WAIT_TIME)
         return driver
