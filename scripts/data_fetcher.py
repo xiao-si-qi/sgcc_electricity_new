@@ -19,6 +19,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from sensor_updator import SensorUpdator
 from error_watcher import ErrorWatcher
+import random
+from fake_useragent import UserAgent
 
 from const import *
 
@@ -121,95 +123,30 @@ class DataFetcher:
                 return False
         return True
 
-    # @staticmethod 
-    def _sliding_track(self, driver, distance):
-        """
-        快速模拟人工滑动轨迹（速度提升一倍）
-        在滑动开始和结束时截图保存到 /data 目录
-        """
+    # @staticmethod
+    def _sliding_track(self, driver, distance):  # 机器模拟人工滑动轨迹
         # 生成时间戳用于文件名
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         screenshot_dir = "/data"
-
-        # 确保截图目录存在
-        if not os.path.exists(screenshot_dir):
-            os.makedirs(screenshot_dir, exist_ok=True)
-
         logging.info("模拟人工滑动开始")
         # 滑动开始前截图
         start_screenshot_path = os.path.join(screenshot_dir, f"slide_start_{timestamp}.png")
         driver.save_screenshot(start_screenshot_path)
         logging.info(f"滑动开始截图已保存: {start_screenshot_path}")
-
+        # 获取按钮
         slider = driver.find_element(By.CLASS_NAME, "slide-verify-slider-mask-item")
         ActionChains(driver).click_and_hold(slider).perform()
-        time.sleep(random.uniform(0.05, 0.1))  # 按下后短暂停顿，时间减半
-
-        tracks = self._generate_tracks(distance)
-
-        for x_offset in tracks:
-            y_offset = random.uniform(-2, 3)  # 保留Y轴抖动
-            ActionChains(driver).move_by_offset(xoffset=x_offset, yoffset=y_offset).perform()
-            # 取消细粒度停顿，改为极小概率短停（或完全移除）
-            if random.random() < 0.1:  # 仅10%概率停顿，且时间极短
-                time.sleep(0.001)
-
-        logging.info("模拟人工滑动结束")
+        # 获取轨迹
+        # tracks = _get_tracks(distance)
+        # for t in tracks:
+        yoffset_random = random.uniform(-2, 4)
+        ActionChains(driver).move_by_offset(xoffset=distance, yoffset=yoffset_random).perform()
+        # time.sleep(0.2)
         ActionChains(driver).release().perform()
-
         # 滑动结束后截图
         end_screenshot_path = os.path.join(screenshot_dir, f"slide_end_{timestamp}.png")
         driver.save_screenshot(end_screenshot_path)
         logging.info(f"滑动结束截图已保存: {end_screenshot_path}")
-
-
-    def _generate_tracks(self, distance):
-        """
-        生成更快滑动轨迹：
-        - 加速阶段步长加倍：6~12px
-        - 减速阶段步长加倍：2~5px
-        - 超出回拉概率降低，幅度减小
-        """
-        tracks = []
-        current = 0
-
-        # 1. 加速阶段：大步快速推进，覆盖约70%距离（比原来更多）
-        while current < distance * 0.7:
-            step = random.randint(6, 12)
-            if current + step > distance * 0.7:
-                step = int(distance * 0.7) - current
-            current += step
-            tracks.append(step)
-            if step <= 0:
-                break
-
-        # 2. 减速微调阶段：步长2~5，快速对准
-        while current < distance:
-            step = random.randint(2, 5)
-            if current + step > distance:
-                step = distance - current
-            current += step
-            tracks.append(step)
-            if step <= 0:
-                break
-
-        # 3. 超出回拉：概率降至20%，超出量减少至1~3px
-        if random.random() < 0.2:
-            over = random.randint(1, 3)
-            tracks.append(over)
-            tracks.append(-over)
-
-        # 4. 总距离修正
-        total = sum(tracks)
-        if total != distance:
-            diff = distance - total
-            if abs(diff) < 6:
-                if tracks:
-                    tracks[-1] += diff
-            else:
-                tracks.append(diff)
-
-        return tracks
 
     def connect_user_db(self, user_id):
         """创建数据库集合，db_name = electricity_daily_usage_{user_id}
@@ -269,22 +206,28 @@ class DataFetcher:
             logging.debug(f"Data update failed: {e}")
 
     def _get_webdriver(self):
-        if platform.system() == 'Windows':
-            driver = webdriver.Edge(service=EdgeService(EdgeChromiumDriverManager(
-                url="https://msedgedriver.microsoft.com/",
-                latest_release_url="https://msedgedriver.microsoft.com/LATEST_RELEASE").install()))
-        else:
-            firefox_options = webdriver.FirefoxOptions()
-            firefox_options.add_argument('--incognito')
-            firefox_options.add_argument("--start-maximized")
+        ua = UserAgent()
+        firefox_options = webdriver.FirefoxOptions()
+        firefox_options.add_argument(f'--user-agent={ua.random}')
+        firefox_options.add_argument('--incognito')
+        firefox_options.add_argument("--start-maximized")
+        if platform.system() != 'Windows':
             firefox_options.add_argument('--headless')
-            firefox_options.add_argument('--no-sandbox')
-            firefox_options.add_argument('--disable-gpu')
-            firefox_options.add_argument('--disable-dev-shm-usage')
-            logging.info(f"Open Firefox.\r")
-            driver = webdriver.Firefox(options=firefox_options, service=FirefoxService("/usr/bin/geckodriver"))
-            driver.implicitly_wait(self.DRIVER_IMPLICITY_WAIT_TIME)
-            # driver.implicitly_wait(self.DRIVER_IMPLICITY_WAIT_TIME)
+        firefox_options.add_argument('--no-sandbox')
+        firefox_options.add_argument('--disable-gpu')
+        firefox_options.add_argument('--disable-dev-shm-usage')
+        firefox_options.set_preference("dom.webdriver.enabled", False)
+        firefox_options.set_preference("useAutomationExtension", False)
+        # 添加额外参数隐藏指纹
+        firefox_options.add_argument("--disable-blink-features=AutomationControlled")
+        width = 1920
+        height = 1080
+        firefox_options.add_argument(f'--window-size={width},{height}')
+        logging.info(f"Open Firefox.\r")
+        service = FirefoxService(GeckoDriverManager().install())
+        driver = webdriver.Firefox(options=firefox_options, service=service)
+        driver.implicitly_wait(self.DRIVER_IMPLICITY_WAIT_TIME)
+        # driver.implicitly_wait(self.DRIVER_IMPLICITY_WAIT_TIME)
         return driver
 
     @ErrorWatcher.watch
